@@ -18,10 +18,14 @@ const userschema=mongoose.Schema({
 			},
 
 
-			userId:{
-				type:String
+			username:{
+				type:String,
+				required:true,
 			},
 
+
+
+		
 
 
 		});

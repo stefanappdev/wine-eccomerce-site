@@ -1,49 +1,34 @@
-import React,{useEffect,useState} from "react";
-import Signup from "./components/Signup.js"
-
+import React from "react"
+import Signup from "./components/pages/Signup"
+import Login from "./components/pages/Login"
+import {BrowserRouter as Router,Routes,Route,Link} from "react-router-dom"
+import Applcation from "./Application"
 
 const App=()=>{
-const [res,setres]=useState()
-
-
-
-const fetchData=async()=>{
-	let resp=await fetch("http://localhost:5000/");
-	return await resp.json()
-	
-	
-}
-
-useEffect(()=>{
-
-	setTimeout(()=> {
-		fetchData()
-		.then(result=>{
-		  setres(result.data)
-		  console.log(res)
-		})
-
-	},2000)
-
-
-},[])
-
-
-
-
-  console.log(res)
-
 
 return(
 
-<React.Fragment>
 
-	<h2> data from server:{res}</h2>
-	<Signup/>
+<Router>
+    
+	<nav>
+		<Link to="/signup">Signup</Link>
+		<Link to="/login">Login</Link>
+	</nav>
 
-</React.Fragment>)
+	<Routes>
+
+	<Route path="/signup" element={<Signup/>}/>
+	<Route path="/" element={<Applcation/>}/>
+	<Route path="/login" element={<Login/>}/>
+
+	</Routes>
 
 
-}
+	
+
+</Router>
+)} 
+
 
 export default App

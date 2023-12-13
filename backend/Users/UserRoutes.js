@@ -11,7 +11,7 @@ let Router=express.Router();
 Router.get("/",(req,res)=>{
 			User.find()
 			.then((result)=>{
-				res.status(200).json({users:result})
+				res.status(200).json(result)
 
 			})
 
@@ -37,6 +37,19 @@ Router.post("/",(req,res)=>{
 
 
 			})
+
+Router.get("/:_id",(req,res)=>{
+	
+	User.findById(req.params._id)
+	
+	.then(result=>{
+		res.json({result}).status(200)
+	})
+	.catch(err=>{
+		console.log(err)
+	})
+
+})
 			
 
 module.exports=Router;
