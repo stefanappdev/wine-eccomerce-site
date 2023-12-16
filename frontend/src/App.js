@@ -1,33 +1,34 @@
 import React from "react"
-import Signup from "./components/pages/Signup"
-import Login from "./components/pages/Login"
-import {BrowserRouter as Router,Routes,Route,Link} from "react-router-dom"
-import Applcation from "./Application"
+import Signup from "./components/forms/Signup"
+import Login from "./components/forms/Login"
+import {BrowserRouter as Router,Routes,Route,Link,useNavigate} from "react-router-dom"
+import { UserContextProvider,useUserContext } from "./components/contexts/UserContext"
+import Application from "./Application"
+import NeedAuth from "./components/pages/NeedAuth"
 
 const App=()=>{
-
+	let UC=useUserContext();
+	
+	
 return(
 
+<UserContextProvider>
+	<Router>
+		
 
-<Router>
-    
-	<nav>
-		<Link to="/signup">Signup</Link>
-		<Link to="/login">Login</Link>
-	</nav>
+		
 
 	<Routes>
-
-	<Route path="/signup" element={<Signup/>}/>
-	<Route path="/" element={<Applcation/>}/>
-	<Route path="/login" element={<Login/>}/>
-
+		<Route path="/signup" element={<Signup/>}/>
+		<Route path="/" element={<NeedAuth> <Application/> </NeedAuth>}/>
+		<Route path="/login" element={ <Login/> }/>
+		
 	</Routes>
 
+	</Router>
+</UserContextProvider>
 
-	
 
-</Router>
 )} 
 
 

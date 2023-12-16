@@ -15,7 +15,7 @@ mongoose.connect("mongodb+srv://ailifeadvice2:6BWn4dj2lHbvnskD@nodetuts.okywb1x.
 app.use(cors());
 
 app.get("/",(request,response)=>{
-
+	console.log("running on port 65000");
 	response.send(
 
 			{data:"im alive and running"}
@@ -28,4 +28,4 @@ app.get("/",(request,response)=>{
 app.use(express.json())
 app.use(express.urlencoded({extended:false}));
 app.use("/users",UserRouter);
-app.listen(5000)	
+app.listen(65000)	
