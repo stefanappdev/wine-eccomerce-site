@@ -1,10 +1,9 @@
-
-
-
 const express=require("express");
 const mongoose=require('mongoose')
 const app=express();
-const UserRouter=require("./Users/UserRoutes.js");
+const UserRouter=require("./Routes/UserRoutes.js");
+const ProductsRouter=require("./Routes/ProductsRoutes.js");
+
 const dotenv=require('dotenv')
 const cors=require('cors');
 
@@ -28,4 +27,6 @@ app.get("/",(request,response)=>{
 app.use(express.json())
 app.use(express.urlencoded({extended:false}));
 app.use("/users",UserRouter);
+app.use("/products",ProductsRouter);
+
 app.listen(65000)	

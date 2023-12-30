@@ -1,11 +1,13 @@
 
 import React,{ useState, useEffect, } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useUserContext } from "../contexts/UserContext";
 
 const Login = () => {
 
 let navigate = useNavigate();
+
 let UC=useUserContext();
 
 
@@ -36,7 +38,7 @@ const fetchUsers= async()=>{
 
  let resp=await fetch("http://localhost:65000/users")  
  let result=await resp.json()
- console.log(result)
+ //console.log(result)
  setUserlist(result)
  
 
@@ -47,7 +49,7 @@ const fetchUsers= async()=>{
 useEffect(() => {
   setTimeout(() => {
   fetchUsers()
-  console.log(Userlist)
+  //console.log(Userlist)
 }, 2000);
 
 },[])
@@ -66,7 +68,7 @@ const HandleLogin=()=>{
 
  let target= users.find((user)=>{
 
-    if(user.username===formdata.username && user.password===formdata.password){
+    if((user.username===formdata.username && user.password===formdata.password)||(user.email===formdata.username && user.password===formdata.password)){
       return user
     }
 
@@ -78,13 +80,14 @@ const HandleLogin=()=>{
     } else{
 
       targetUser={...target}
-    console.log(targetUser)
+    //console.log(targetUser)
+    UC.setUserId(targetUser._id)
     UC.setWhoIsLoggedIn(targetUser.username)
     UC.setIsLoggedIn(true)
     setloginMsg("logged in successfully,redirecting you to home page")
-    
+  
     setTimeout(()=>{
-       navigate("/")
+       navigate(`/users/${targetUser._id}/home`)
     },2000)
    
 
@@ -112,12 +115,12 @@ const HandleSubmit = (event) => {
       <h1>Login Page</h1>
 
       <form onSubmit={HandleSubmit}>
-            <label for="username">	username:</label>
+            <label for="username">	username or email:</label>
 
 
       <input type="text" 
       onChange={handleChange} 
-      placeholder='username' 
+      placeholder='Enter your username or email' 
       id="username"
       value={formdata.username} 
       name="username"
@@ -144,8 +147,11 @@ const HandleSubmit = (event) => {
 
       <p>{loginMsg}</p>
 
-      <button type="submit">Login</button>
+     
+      <button >Login</button>
       </form>
+
+      <button onClick={() => navigate("/")} >Back</button>
           </div>
         )
   
