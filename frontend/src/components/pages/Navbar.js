@@ -1,8 +1,11 @@
 import react from "react";
 import { useParams,Outlet } from "react-router-dom";
+import { useUserContext } from "../contexts/UserContext";
 import "../../styles/profile.css"
 
+
 const Navbar = ()=>{
+    let UC=useUserContext();
     let params = useParams();
     return(
         <nav id="profile-navbar">
@@ -27,8 +30,8 @@ const Navbar = ()=>{
         </a>
         <div id="trolley-counter">0</div>
 
-        <a href="/">  
-            <button>Logout</button>
+        <a href={UC.isLoggedIn?`/users/${params.id}/home`:`/login`}>  
+            <button>{UC.isLoggedIn?`Logout`:`Login`}</button>
         </a>
 
 

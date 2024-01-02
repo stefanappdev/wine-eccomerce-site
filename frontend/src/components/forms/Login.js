@@ -1,162 +1,141 @@
-
-import React,{ useState, useEffect, } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useUserContext } from "../contexts/UserContext";
 
-const Login = () => {
 
-let navigate = useNavigate();
+const Login=()=>{
 
-let UC=useUserContext();
-
-
-let users = [];
-let targetUser = {}
-
-const [formdata, setformdata] = useState({
-
-  username: "",
-  password: "",
-})
-
-const[Userlist,setUserlist]=useState([])
-const [loginMsg, setloginMsg] = useState("");
-
-
-const handleChange = (event) => {
+    let navigate=useNavigate();
+    let UC=useUserContext();
   
-  setformdata({
-    ...formdata,
-    [event.target.name]: event.target.value,
-  });
-}
 
+     const [UserData,setUserData]=useState([])
+     
+     const [loginmsg,setloginmsg]=useState("")
+     const[target,setTarget]=useState(null)
+     const [formdata,setformdata]=useState({
 
-const fetchUsers= async()=>{
+        password:"",
+        username:""
+     })
 
-
- let resp=await fetch("http://localhost:65000/users")  
- let result=await resp.json()
- //console.log(result)
- setUserlist(result)
- 
-
-
-}
-
-
-useEffect(() => {
-  setTimeout(() => {
-  fetchUsers()
-  //console.log(Userlist)
-}, 2000);
-
-},[])
-
-
-const HandleLogin=()=>{
-
-  for (let i = 0; i < Userlist.length; i++) {
-    users.push(Userlist[i])
-  }
-
-  if(formdata.username==="" || formdata.password===""){
-    setloginMsg("please enter username and password")
-    return
-  }
-
- let target= users.find((user)=>{
-
-    if((user.username===formdata.username && user.password===formdata.password)||(user.email===formdata.username && user.password===formdata.password)){
-      return user
+    const handleChange=(e)=>{
+       
+        
+        setformdata({...formdata,[e.target.name]:e.target.value});
     }
 
-    })
+     const fetchUsers=async()=>{
+             let resp= await fetch("http://localhost:65000/users")
+             let users= await resp.json();
+              setUserData(users)
+        }
 
-    if(target===undefined||target===null){
-      setloginMsg("login failed user not found,please try again")
-      return
-    } else{
+      useEffect(()=>{
+        setTimeout(()=>{
 
-      targetUser={...target}
-    //console.log(targetUser)
-    UC.setUserId(targetUser._id)
-    UC.setWhoIsLoggedIn(targetUser.username)
-    UC.setIsLoggedIn(true)
-    setloginMsg("logged in successfully,redirecting you to home page")
-  
-    setTimeout(()=>{
-       navigate(`/users/${targetUser._id}/home`)
-    },2000)
-   
+        fetchUsers();
+       
+        },1000)
+      },[])  
+         
+      
+      
+       
 
-    }
 
+    const HandleLogin=()=>{
+       let Users=[...UserData]
+       //console.log(Users)
+      
+        Users.find(user=>{
+                    if(
+                    (user.password===formdata.password && user.username===formdata.username)
+                        ||
+                        (user.password===formdata.password && user.email===formdata.username)){
+                         setTarget(user)
+                    }
+                    
+                })
+
+        //console.log(target)
+       
+        
+      
+        
+        if(target!==null&&target!==undefined){
+            
+           UC.setIsLoggedIn(true)
+            UC.setUser(target)
+            UC.setWhoIsLoggedIn(target.username)
+            setloginmsg("login successful")
+            
+            setTimeout(()=>{
+
+            //console.log("user found")
+            navigate(`/users/${target._id}/home`)
+            },2000)
+            
+        }else{
+            setloginmsg("Please check your username or password")
+            UC.setIsLoggedIn(false)
+            
+            }
+    
   }
-  
-  
-const HandleSubmit = (event) => {
-  event.preventDefault();
-    HandleLogin()
-
-  }
-  
- 
-  
-   
     
 
+    const HandleSubmit=(e)=>{
+        e.preventDefault();
+        HandleLogin();
+    }
+      
+
+    return(<React.Fragment>
+
+        <h1>Login Page</h1>
+
+    <form onSubmit={HandleSubmit}>
+			
+		
+
+		<label>
+			username or email:
+			<input type="text" 
+			onChange={handleChange} 
+			placeholder='Enter your username or email' 
+			value={formdata.username} name="username"
+			/>
+
+		</label>
+
+		
+		<br/>
+
+		
+		<label>
+			password:
+			<input 
+			type="password"
+			 onChange={handleChange} 
+			placeholder='password' 
+			value={formdata.password} 
+			name="password"
+			/>
+
+		</label>
+
+        <button type="submit">Submit</button>
+
+    </form>
 
 
-
-  return (
-    <div>
-      <h1>Login Page</h1>
-
-      <form onSubmit={HandleSubmit}>
-            <label for="username">	username or email:</label>
+        {loginmsg}
 
 
-      <input type="text" 
-      onChange={handleChange} 
-      placeholder='Enter your username or email' 
-      id="username"
-      value={formdata.username} 
-      name="username"
-      />
-      <p></p>
+    </React.Fragment>)
+}
 
-
-
-      <br/>
-
-
-      <label for="password">password:</label>
-
-      <input 
-      type="password"
-      onChange={handleChange} 
-      placeholder='password' 
-      value={formdata.password} 
-      id="password"
-      name="password"
-      />
-      <p></p>
-
-
-      <p>{loginMsg}</p>
-
-     
-      <button >Login</button>
-      </form>
-
-      <button onClick={() => navigate("/")} >Back</button>
-          </div>
-        )
-  
-  }
-  
 
 
 export default Login

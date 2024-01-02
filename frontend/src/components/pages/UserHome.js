@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 import Navbar from "./Navbar";
 
@@ -8,10 +8,16 @@ const UserHome=()=>{
 let UC=useUserContext();
 let navigate = useNavigate();
 
-if(!UC.isLoggedIn){
 
-	navigate("/login")
+const redirect=()=>{
+	
+	if(UC.isLoggedIn===false){
+		setTimeout(()=>{
+				navigate("/login")
+		})
+	}
 }
+
 
 const name=UC.whoIsLoggedIn
 
@@ -55,7 +61,7 @@ UC.isLoggedIn?
 	<Navbar/>
 	<h1>Welcome {name}</h1>
 	<h2> data from server:{res}</h2>
-</React.Fragment>:<h1>please login first</h1>)
+</React.Fragment>:redirect())
 
 
 }

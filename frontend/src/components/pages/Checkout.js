@@ -6,16 +6,31 @@ function Checkout() {
   let UC=useUserContext();
   let navigate = useNavigate();
   
-  if(!UC.isLoggedIn){
-    navigate("/login")
+  const redirect=()=>{
+    let msg="Please Login,redirecting you to login page"
+  
+    if(UC.isLoggedIn===false){
+      <h1>{msg}</h1>
+      setTimeout(()=>{
+        
+        navigate("/login")
+      },2000)
+    }
   }
 
-  return (
-    <div>
-      <Navbar/>
-      Checkout
 
-    </div>
+  
+
+  return (
+     UC.isLoggedIn?<React.Fragment>
+      <Navbar/>
+          <div>
+        
+          Checkout
+
+        </div>
+      </React.Fragment>:redirect()
+    
   )
 }
 
