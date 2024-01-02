@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../contexts/UserContext";
 
 
 const Login=()=>{
 
     let navigate=useNavigate();
+    let UC=useUserContext();
   
 
-     const [Users,setUsers]=useState([])
+     const [UserData,setUserData]=useState([])
+     
+     const [loginmsg,setloginmsg]=useState("")
+     const[target,setTarget]=useState(null)
      const [formdata,setformdata]=useState({
 
         password:"",
@@ -21,35 +26,70 @@ const Login=()=>{
     }
 
      const fetchUsers=async()=>{
-             let resp= await fetch("http://localhost:5000/users")
+             let resp= await fetch("http://localhost:65000/users")
              let users= await resp.json();
-              setUsers(users)
+              setUserData(users)
         }
 
+      useEffect(()=>{
+        setTimeout(()=>{
 
+        fetchUsers();
+       
+        },1000)
+      },[])  
+         
+      
+      
+       
+
+
+    const HandleLogin=()=>{
+       let Users=[...UserData]
+       //console.log(Users)
+      
+        Users.find(user=>{
+                    if(
+                    (user.password===formdata.password && user.username===formdata.username)
+                        ||
+                        (user.password===formdata.password && user.email===formdata.username)){
+                         setTarget(user)
+                    }
+                    
+                })
+
+        //console.log(target)
+       
+        
+      
+        
+        if(target!==null&&target!==undefined){
+            
+           UC.setIsLoggedIn(true)
+            UC.setUser(target)
+            UC.setWhoIsLoggedIn(target.username)
+            setloginmsg("login successful")
+            
+            setTimeout(()=>{
+
+            //console.log("user found")
+            navigate(`/users/${target._id}/home`)
+            },2000)
+            
+        }else{
+            setloginmsg("Please check your username or password")
+            UC.setIsLoggedIn(false)
+            
+            }
+    
+  }
+    
 
     const HandleSubmit=(e)=>{
         e.preventDefault();
-
-        setTimeout(()=>{
-            fetchUsers();
-            console.log("users fetched successfully")
-        },1000)
-        
-        
-            
-        console.log(Users)
-            let target=Users.map(user=>{
-                        if (user.password===formdata.password && user.username===formdata.username){
-                            return user
-                        }
-                })
-            if(target!==null){
-                console.log("user found")
-                navigate("/")
-            }
-        
+        HandleLogin();
     }
+      
 
     return(<React.Fragment>
 
@@ -60,10 +100,10 @@ const Login=()=>{
 		
 
 		<label>
-			username:
+			username or email:
 			<input type="text" 
 			onChange={handleChange} 
-			placeholder='username' 
+			placeholder='Enter your username or email' 
 			value={formdata.username} name="username"
 			/>
 
@@ -85,12 +125,12 @@ const Login=()=>{
 
 		</label>
 
-        <button>Submit</button>
+        <button type="submit">Submit</button>
 
     </form>
 
 
-
+        {loginmsg}
 
 
     </React.Fragment>)
